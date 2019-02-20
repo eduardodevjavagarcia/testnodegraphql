@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
 import com.example.testnodegraphql.domain.Person;
 import com.example.testnodegraphql.exception.PersonExistsException;
@@ -36,6 +37,7 @@ public class PersonService {
 		log.info("Save person");
 		
 		Optional.ofNullable(personRequest)
+				.filter(personReq -> !ObjectUtils.isEmpty(personReq.getId()))
 		        .flatMap(personReq -> this.personRepository.findById(personReq.getId()))
 		        .ifPresent(personReq -> new PersonExistsException(personReq.getName() + " already exist in the system"));
 		
@@ -43,22 +45,30 @@ public class PersonService {
 		return this.personRepository.save(personRequest);
 	}
 
-	public Person update(Long id) {
+	public Person updatePartial(Long id, Person personRequest) {
 		log.info("update");
 		
 		return Optional.ofNullable(id)
                        .map(this.personRepository::findById)
                        .filter(Optional::isPresent)
                        .map(Optional::get)
-                       .map(this.personRepository::save)
+                       .map(person -> this.personRepository.save(Person.valueOf(person, personRequest.getName(), personRequest.getAge())))
                        .orElseThrow(() -> new PersonNotExistsException("Person not exist in the system"));
 	}
 
-	public void delete(Long id) {
+	public Person delete(Long id) {
 		log.info("delete");
-		Optional.ofNullable(id)
-				.flatMap(this.personRepository::findById)
-		        .ifPresent(this.personRepository::delete);
+		return Optional.ofNullable(id)
+				.map(this.personRepository::findById)
+				.filter(Optional::isPresent)
+                .map(Optional::get)
+		        .map(this::delete)
+		        .orElse(null);
+	}
+	
+	public Person delete(Person person) {
+		this.personRepository.delete(person);
+		return person;
 	}
 
 	public Person findById(Long id) {
@@ -66,6 +76,16 @@ public class PersonService {
 				.filter(Optional::isPresent)
 				.map(Optional::get)
 				.orElseThrow(PersonNotFoundException::new);
+	}
+	
+	public Person update(Long id, Person personRequest) {
+		log.info("Save person");
+		
+		Optional.ofNullable(id)
+				.flatMap(idPerson -> this.personRepository.findById(idPerson))
+		        .ifPresent(personReq -> new PersonExistsException(personReq.getName() + " already exist in the system"));
+		
+		return this.personRepository.save(Person.valueOf(id, personRequest));
 	}
 
 }

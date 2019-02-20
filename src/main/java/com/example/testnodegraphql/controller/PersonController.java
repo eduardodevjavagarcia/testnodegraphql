@@ -41,19 +41,18 @@ public class PersonController {
 	}
 
 	@PatchMapping(path = "/persons/{id}")
-	public ResponseEntity<?> partialUpdate(@RequestBody Person person) {
-		return new ResponseEntity<>(this.personService.save(person), HttpStatus.NO_CONTENT);
+	public ResponseEntity<?> partialUpdate(@PathVariable Long id, @RequestBody Person person) {
+		return ResponseEntity.ok(this.personService.updatePartial(id, person));
 	}
 
 	@PutMapping(path = "/persons/{id}")
-	public ResponseEntity<Person> update(@PathVariable Long id) {
-		return new ResponseEntity<>(this.personService.update(id), HttpStatus.OK);
+	public ResponseEntity<Person> update(@PathVariable Long id, @RequestBody Person person) {
+		return ResponseEntity.ok(this.personService.update(id, person));
 	}
 
 	@DeleteMapping(path = "/persons/{id}")
 	public ResponseEntity<?> delete(@PathVariable Long id) {
-		this.personService.delete(id);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.ok(this.personService.delete(id));
 	}
 
 }

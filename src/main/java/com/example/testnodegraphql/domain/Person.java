@@ -26,6 +26,7 @@ public class Person {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id")
 	private Long id;
 
 	@Column(name = "name")
@@ -37,5 +38,25 @@ public class Person {
 	@JsonFormat(timezone = "GMT")
 	@Column(name = "date_birth")
 	private LocalDate dateBirth;
+	
+	
+	public static Person valueOf(Person person, String name, Integer age) {
+		return Person.builder()
+						.id(person
+						.getId())
+						.name(name)
+						.age(age)
+						.dateBirth(person.getDateBirth())
+						.build();
+	}
+	
+	public static Person valueOf(Long id, Person person) {
+		return Person.builder()
+						.id(id)
+						.name(person.getName())
+						.age(person.getAge())
+						.dateBirth(person.getDateBirth())
+						.build();
+	}
 
 }
