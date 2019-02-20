@@ -12,7 +12,7 @@ Clone the project with command: **git clone** https://github.com/eduardodevjavag
 - mvn clean spring-boot:run
 
 # Database H2
-Essa aplicação é standalone. Para acessar o banco de dados H2, use a url: http://localhost:9090/h2-console
+Essa aplicação é standalone. Para acessar o banco de dados H2, use a url: http://localhost:9090/h2-console<br />
 **Observação:** como a propriedade **ddl-auto**, no arquivo **application.yml** está com o valor **create-drop**, o banco de dados será criado e apaga toda vez que iniciar a aplicação.
 
 # Main References
